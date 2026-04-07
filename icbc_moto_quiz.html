@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICBC Motorcycle Knowledge Test Practice</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap');
+
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #222222;
+    --border: #2e2e2e;
+    --accent: #e8b000;
+    --accent2: #ff6b00;
+    --text: #e8e8e8;
+    --text-muted: #888;
+    --correct: #2a7a3b;
+    --correct-border: #4caf65;
+    --wrong: #7a2a2a;
+    --wrong-border: #c0392b;
+    --highlight: #1a2e1a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+
+  /* HEADER */
+  header {
+    width: 100%;
+    max-width: 820px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo-icon {
+    width: 52px; height: 52px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+  }
+  header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    color: var(--text);
+    line-height: 1;
+  }
+  header p { color: var(--text-muted); font-size: 0.85rem; margin-top: 4px; }
+
+  /* PROGRESS BAR */
+  #progress-wrap {
+    width: 100%;
+    max-width: 820px;
+    margin-bottom: 24px;
+  }
+  #progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  #progress-bar-bg {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  #progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 3px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  /* SCORE BAR */
+  #score-bar {
+    width: 100%; max-width: 820px;
+    display: flex; gap: 12px; margin-bottom: 24px;
+  }
+  .score-chip {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    text-align: center;
+  }
+  .score-chip .num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+  .score-chip .lbl { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+  .score-chip.correct .num { color: #4caf65; }
+  .score-chip.wrong .num { color: #e74c3c; }
+  .score-chip.remaining .num { color: var(--accent); }
+
+  /* CHAPTER TAG */
+  #chapter-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* QUESTION CARD */
+  #question-card {
+    width: 100%;
+    max-width: 820px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 32px;
+    margin-bottom: 16px;
+  }
+
+  #question-text {
+    font-size: 1.2rem;
+    font-weight: 500;
+    line-height: 1.6;
+    margin-bottom: 28px;
+    color: var(--text);
+  }
+
+  /* OPTIONS */
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .option-btn {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    text-align: left;
+    cursor: pointer;
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  }
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: #1e1e00;
+    transform: translateX(3px);
+  }
+  .option-btn .opt-letter {
+    flex-shrink: 0;
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    transition: background 0.15s, color 0.15s;
+  }
+  .option-btn:hover:not(:disabled) .opt-letter {
+    background: var(--accent);
+    color: #000;
+  }
+
+  /* Correct / Wrong states */
+  .option-btn.correct {
+    border-color: var(--correct-border);
+    background: var(--correct);
+  }
+  .option-btn.correct .opt-letter {
+    background: var(--correct-border);
+    color: #fff;
+  }
+  .option-btn.wrong {
+    border-color: var(--wrong-border);
+    background: var(--wrong);
+  }
+  .option-btn.wrong .opt-letter {
+    background: var(--wrong-border);
+    color: #fff;
+  }
+  .option-btn:disabled { cursor: default; transform: none; }
+
+  /* EXPLANATION BOX */
+  #explanation-box {
+    width: 100%;
+    max-width: 820px;
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 22px 28px;
+    margin-bottom: 16px;
+    display: none;
+  }
+  #explanation-box.visible { display: block; }
+  #explanation-box.correct-exp { border: 1.5px solid var(--correct-border); }
+  #explanation-box.wrong-exp { border: 1.5px solid var(--wrong-border); }
+
+  #explanation-header {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  #explanation-box.correct-exp #explanation-header { color: #4caf65; }
+  #explanation-box.wrong-exp #explanation-header { color: #e74c3c; }
+
+  #explanation-text {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: #ccc;
+  }
+  #explanation-text strong { color: var(--text); }
+
+  /* NEXT BUTTON */
+  #next-btn {
+    display: none;
+    width: 100%; max-width: 820px;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    padding: 16px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    margin-bottom: 16px;
+  }
+  #next-btn:hover { background: #ffca2c; transform: translateY(-1px); }
+  #next-btn.visible { display: block; }
+
+  /* RESULTS SCREEN */
+  #results-screen {
+    display: none;
+    width: 100%; max-width: 820px;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  #results-screen.visible { display: block; }
+  .results-icon { font-size: 5rem; margin-bottom: 16px; }
+  .results-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+  .results-subtitle { color: var(--text-muted); font-size: 1rem; margin-bottom: 32px; }
+  .results-score-big {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 6rem;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .results-fraction { color: var(--text-muted); font-size: 1rem; margin-bottom: 32px; }
+
+  .results-grade-bar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 28px;
+  }
+  .grade-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .grade-message { color: var(--text-muted); font-size: 0.9rem; }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .stat-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .stat-box .n {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    line-height: 1;
+  }
+  .stat-box .n.g { color: #4caf65; }
+  .stat-box .n.r { color: #e74c3c; }
+  .stat-box .l { font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+  #restart-btn {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    padding: 16px 40px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+  #restart-btn:hover { background: #ffca2c; transform: translateY(-2px); }
+
+  /* START SCREEN */
+  #start-screen {
+    width: 100%; max-width: 820px;
+    text-align: center;
+    padding: 20px;
+  }
+  #start-screen h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+  }
+  #start-screen p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.7;
+    max-width: 540px;
+    margin: 0 auto 28px;
+  }
+  .chapters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    margin-bottom: 32px;
+    text-align: left;
+  }
+  .chapter-pill {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 0.8rem;
+  }
+  .chapter-pill .ch-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    margin-bottom: 3px;
+  }
+  .chapter-pill .ch-name { color: var(--text); }
+
+  #start-btn {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    padding: 18px 60px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+  #start-btn:hover { background: #ffca2c; transform: translateY(-2px); }
+
+  #main-quiz { display: none; width: 100%; }
+  #main-quiz.visible { display: flex; flex-direction: column; align-items: center; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-icon">🏍️</div>
+  <div>
+    <h1>ICBC MOTORCYCLE KNOWLEDGE TEST</h1>
+    <p>British Columbia · Class 6/8 Practice Exam · Learn to Ride Smart</p>
+  </div>
+</header>
+
+<!-- START SCREEN -->
+<div id="start-screen">
+  <h2>Are You Ready to Ride?</h2>
+  <p>This practice exam covers all chapters of the ICBC <em>Learn to Ride Smart</em> guide. Questions and answer order are randomized every time. Get instant explanations for every answer.</p>
+  <div class="chapters-grid">
+    <div class="chapter-pill"><div class="ch-num">CH 1</div><div class="ch-name">You in the Rider's Seat</div></div>
+    <div class="chapter-pill"><div class="ch-num">CH 2</div><div class="ch-name">You & Your Motorcycle</div></div>
+    <div class="chapter-pill"><div class="ch-num">CH 3</div><div class="ch-name">Knowing Your Motorcycle</div></div>
+    <div class="chapter-pill"><div class="ch-num">CH 4</div><div class="ch-name">Signs, Signals & Markings</div></div>
+    <div class="chapter-pill"><div class="ch-num">CH 5</div><div class="ch-name">Rules of the Road</div></div>
+    <div class="chapter-pill"><div class="ch-num">CH 6</div><div class="ch-name">See-Think-Do</div></div>
+    <div class="chapter-pill"><div class="ch-num">CH 7</div><div class="ch-name">Sharing the Road</div></div>
+    <div class="chapter-pill"><div class="ch-num">CH 8</div><div class="ch-name">Personal Strategies</div></div>
+    <div class="chapter-pill"><div class="ch-num">CH 9</div><div class="ch-name">Challenging Conditions</div></div>
+    <div class="chapter-pill"><div class="ch-num">CH 10</div><div class="ch-name">Emergency Strategies</div></div>
+  </div>
+  <button id="start-btn" onclick="startQuiz()">START PRACTICE TEST</button>
+</div>
+
+<!-- MAIN QUIZ -->
+<div id="main-quiz">
+  <div id="progress-wrap">
+    <div id="progress-info">
+      <span id="progress-label">Question 1 of 60</span>
+      <span id="progress-pct">0%</span>
+    </div>
+    <div id="progress-bar-bg"><div id="progress-bar"></div></div>
+  </div>
+
+  <div id="score-bar">
+    <div class="score-chip correct"><div class="num" id="score-correct">0</div><div class="lbl">Correct</div></div>
+    <div class="score-chip wrong"><div class="num" id="score-wrong">0</div><div class="lbl">Wrong</div></div>
+    <div class="score-chip remaining"><div class="num" id="score-remaining">60</div><div class="lbl">Remaining</div></div>
+  </div>
+
+  <div id="chapter-tag">📖 Chapter —</div>
+
+  <div id="question-card">
+    <div id="question-text"></div>
+    <div class="options-list" id="options-list"></div>
+  </div>
+
+  <div id="explanation-box">
+    <div id="explanation-header"></div>
+    <div id="explanation-text"></div>
+  </div>
+
+  <button id="next-btn" onclick="nextQuestion()">NEXT QUESTION →</button>
+</div>
+
+<!-- RESULTS SCREEN -->
+<div id="results-screen">
+  <div class="results-icon" id="result-icon">🏆</div>
+  <div class="results-title" id="result-title">TEST COMPLETE</div>
+  <div class="results-subtitle" id="result-subtitle"></div>
+  <div class="results-score-big" id="result-score-big" style="color: var(--accent);">—%</div>
+  <div class="results-fraction" id="result-fraction"></div>
+  <div class="results-grade-bar">
+    <div class="grade-label" id="result-grade">—</div>
+    <div class="grade-message" id="result-message"></div>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-box"><div class="n g" id="r-correct">—</div><div class="l">Correct Answers</div></div>
+    <div class="stat-box"><div class="n r" id="r-wrong">—</div><div class="l">Wrong Answers</div></div>
+  </div>
+  <button id="restart-btn" onclick="restartQuiz()">TAKE TEST AGAIN</button>
+</div>
+
+<script>
+const ALL_QUESTIONS = [
+  // ===== CHAPTER 1: YOU IN THE RIDER'S SEAT =====
+  {
+    chapter: "Chapter 1 — You in the Rider's Seat",
+    q: "More than half of all motorcycle crashes result in which outcome?",
+    correct: "Injury or death",
+    wrong: ["Minor vehicle damage only", "A traffic violation ticket", "Loss of licence only"],
+    explanation: "<strong>Correct: Injury or death.</strong> Unlike car occupants, motorcycle riders have no steel cage, bumpers, seatbelts, or airbags surrounding them. This makes riders extremely vulnerable in any collision, which is why more than half of all motorcycle crashes result in injury or death."
+  },
+  {
+    chapter: "Chapter 1 — You in the Rider's Seat",
+    q: "According to the U.S. Department of Transportation, motorcycle riders are how many times more likely to die in traffic crashes compared to motorists in cars?",
+    correct: "16 times more likely",
+    wrong: ["4 times more likely", "8 times more likely", "25 times more likely"],
+    explanation: "<strong>Correct: 16 times more likely.</strong> The U.S. Department of Transportation statistics show that motorcycle riders face dramatically higher fatality risk than car occupants. This underlines why skill, good gear, and smart decision-making are so critical for riders."
+  },
+  {
+    chapter: "Chapter 1 — You in the Rider's Seat",
+    q: "Which three core choices does a 'smart rider' always make according to the guide?",
+    correct: "Be fit to ride, make good decisions, take responsibility",
+    wrong: ["Ride fast, look cool, carry a passenger", "Buy the biggest bike, always wear leather, ride daily", "Follow the group, keep up with traffic, ride in the left lane"],
+    explanation: "<strong>Correct: Be fit to ride, make good decisions, take responsibility.</strong> These are the three pillars of smart riding outlined in Chapter 1. Being fit means physical and mental readiness. Making good decisions involves planning and predicting. Taking responsibility covers yourself, your passengers, and other road users."
+  },
+  {
+    chapter: "Chapter 1 — You in the Rider's Seat",
+    q: "A passenger without a helmet wants a short two-block ride. What should you do?",
+    correct: "Refuse the ride — all passengers must wear an approved helmet",
+    wrong: ["Give the ride since it is only two blocks", "Ride slowly to compensate for no helmet", "Only give the ride if traffic is light"],
+    explanation: "<strong>Correct: Refuse the ride.</strong> In British Columbia, all riders AND their passengers are legally required to wear an approved motorcycle safety helmet. There are no exceptions based on distance. As the rider, you are also responsible for your passenger's safety."
+  },
+  {
+    chapter: "Chapter 1 — You in the Rider's Seat",
+    q: "When riding near a pedestrian who appears ready to cross but is not yet stepping out, what is the smart choice?",
+    correct: "Be cautious, slow down, and be prepared to stop",
+    wrong: ["Speed up to clear the intersection before they cross", "Honk to let them know you are passing", "Maintain speed since they haven't stepped out yet"],
+    explanation: "<strong>Correct: Be cautious and slow down.</strong> Pedestrians can be unpredictable and may step out suddenly. Many don't know how fast a motorcycle is travelling or how far it takes to stop. Slowing and preparing to stop is always the responsible choice, even if the pedestrian hasn't moved yet."
+  },
+  {
+    chapter: "Chapter 1 — You in the Rider's Seat",
+    q: "What does 'predicting the scene' help you do while riding?",
+    correct: "Anticipate potential hazards and make the right decisions ahead of time",
+    wrong: ["Ride at maximum speed by reading clear roads", "Determine when you can safely run yellow lights", "Plan the fastest route through intersections"],
+    explanation: "<strong>Correct: Anticipate potential hazards.</strong> Being able to predict the riding environment — such as recognizing a stale green light or a car about to turn — lets you make decisions before a hazard becomes an emergency. Riding at an appropriate speed and scanning ahead are key to prediction."
+  },
+
+  // ===== CHAPTER 2: YOU AND YOUR MOTORCYCLE =====
+  {
+    chapter: "Chapter 2 — You and Your Motorcycle",
+    q: "Which type of motorcycle helmet provides the best protection in a collision?",
+    correct: "A full-face helmet",
+    wrong: ["An open-face helmet with goggles", "A half-shell helmet", "A motocross helmet with removable chin guard"],
+    explanation: "<strong>Correct: A full-face helmet.</strong> A full-face helmet provides the best protection in a collision because it protects the entire head, including the face. It is the only helmet type that protects your face. It also protects against wind, dust, rain, insects, and debris."
+  },
+  {
+    chapter: "Chapter 2 — You and Your Motorcycle",
+    q: "What standards should you look for on a helmet label to ensure it meets B.C. law?",
+    correct: "DOT, Snell M2005/M2010, or ECE standards",
+    wrong: ["CSA or ISO standards only", "Any CE-marked product", "Manufacturer's own safety rating"],
+    explanation: "<strong>Correct: DOT, Snell M2005/M2010, or ECE.</strong> B.C. law requires helmets to meet one of these recognized safety standards. Simply buying a helmet labelled 'motorcycle helmet' is not enough — you must verify it carries one of these approved certification marks."
+  },
+  {
+    chapter: "Chapter 2 — You and Your Motorcycle",
+    q: "Why should you generally avoid buying a used motorcycle helmet?",
+    correct: "It may have been in a crash, and internal damage may not be visible",
+    wrong: ["Used helmets are always too large", "The padding shrinks and becomes ineffective after one use", "Used helmets do not meet current safety standards"],
+    explanation: "<strong>Correct: Internal damage may not be visible.</strong> A helmet that has been in a crash may look fine on the outside but have compromised internal structure that will not protect you properly. Since damage is often invisible, it is safest to buy new."
+  },
+  {
+    chapter: "Chapter 2 — You and Your Motorcycle",
+    q: "Which clothing material is recommended for motorcycle riding because of its abrasion resistance?",
+    correct: "Leather or quality synthetics like Kevlar and Cordura nylon",
+    wrong: ["Cotton denim jeans and a t-shirt", "Polyester athletic wear", "Waterproof nylon rain gear alone"],
+    explanation: "<strong>Correct: Leather or Kevlar/Cordura synthetics.</strong> These materials offer strong protection from abrasion in a crash. Regular denim jeans provide only minimum protection. Never ride in lightweight pants or shorts — proper riding gear significantly reduces the chance of road rash injuries."
+  },
+  {
+    chapter: "Chapter 2 — You and Your Motorcycle",
+    q: "Why is eyeglass or sunglass protection considered inadequate for motorcycle riding?",
+    correct: "They can fly off, move, or shatter while riding",
+    wrong: ["They cause glare that impairs vision at high speeds", "They are too heavy and cause neck fatigue", "They make it hard to see in low-light conditions"],
+    explanation: "<strong>Correct: They can fly off, move, or shatter.</strong> Regular eyeglasses and sunglasses do not provide adequate eye protection for riding. The best protection is a full-face helmet with a built-in face shield, which protects both your eyes and your face from wind, insects, and debris."
+  },
+  {
+    chapter: "Chapter 2 — You and Your Motorcycle",
+    q: "What type of motorcycle is described as general-purpose and good for learners, with the rider in an upright posture?",
+    correct: "Standard motorcycle",
+    wrong: ["Cruiser", "Sport motorcycle", "Touring motorcycle"],
+    explanation: "<strong>Correct: Standard motorcycle.</strong> Standard motorcycles are general-purpose bikes that place the rider in an upright position and are generally recommended for learners. Cruisers have pulled-back handlebars and a relaxed style; sport bikes are optimized for speed and performance; touring bikes are designed for long distances."
+  },
+
+  // ===== CHAPTER 3: KNOWING YOUR MOTORCYCLE =====
+  {
+    chapter: "Chapter 3 — Knowing Your Motorcycle",
+    q: "Squeezing the clutch lever does what to the engine?",
+    correct: "Disconnects the engine from the transmission",
+    wrong: ["Applies the rear brake", "Slows the engine to idle speed", "Locks the front wheel"],
+    explanation: "<strong>Correct: Disconnects the engine from the transmission.</strong> The clutch lever on the left handlebar disengages the clutch when squeezed, separating the engine from the transmission. Releasing it re-engages the connection. You use it when changing gears, putting the bike in neutral, or during slow-speed manoeuvres."
+  },
+  {
+    chapter: "Chapter 3 — Knowing Your Motorcycle",
+    q: "The front brake lever provides approximately what percentage of your motorcycle's stopping power?",
+    correct: "70 per cent",
+    wrong: ["30 per cent", "50 per cent", "90 per cent"],
+    explanation: "<strong>Correct: 70 per cent.</strong> The front brake is your most powerful braking tool, providing about 70% of your stopping power. You should always use both front and rear brakes under normal riding conditions, but never neglect the front brake — it is critical for effective stopping."
+  },
+  {
+    chapter: "Chapter 3 — Knowing Your Motorcycle",
+    q: "To increase engine speed with the throttle, you should:",
+    correct: "Rotate the right handlebar grip toward you (roll on)",
+    wrong: ["Rotate it away from you", "Pull it outward away from the bike", "Push down on the right footpeg simultaneously"],
+    explanation: "<strong>Correct: Rotate toward you (roll on).</strong> The right handlebar grip is the throttle/accelerator. Rolling it toward you increases engine speed; rotating it away from you (roll off) decreases engine speed. The throttle should always spring back to idle when you release it."
+  },
+  {
+    chapter: "Chapter 3 — Knowing Your Motorcycle",
+    q: "What does the neutral indicator light on most motorcycles look like?",
+    correct: "A green light indicating the transmission is in neutral",
+    wrong: ["A red light warning the gear is disengaged", "A blue light on the instrument panel", "A flashing amber light near the speedometer"],
+    explanation: "<strong>Correct: A green light.</strong> The neutral indicator is usually a green light on the instrument panel. It tells you the transmission is in neutral, meaning the engine is not connected to the rear wheel through the gears. Always confirm neutral before using the electric starter."
+  },
+  {
+    chapter: "Chapter 3 — Knowing Your Motorcycle",
+    q: "When should you check your motorcycle's tire pressure?",
+    correct: "When the tire is cold, at least once a week if riding regularly",
+    wrong: ["After every ride while tires are warm for accuracy", "Only when you notice the tire looks low", "Monthly is sufficient for most riders"],
+    explanation: "<strong>Correct: When the tire is cold, at least weekly.</strong> Tire pressure must be checked when tires are cold because heat from riding increases pressure temporarily and gives inaccurate readings. Regular checks help maintain safe handling, fuel efficiency, and tire life."
+  },
+  {
+    chapter: "Chapter 3 — Knowing Your Motorcycle",
+    q: "Most motorcycles convex mirrors are used. What is a key limitation of these mirrors?",
+    correct: "They make objects appear smaller and farther away than they actually are",
+    wrong: ["They vibrate at highway speeds causing a blurry image", "They only show a narrow strip directly behind you", "They cannot be adjusted while riding"],
+    explanation: "<strong>Correct: Objects look smaller and farther away.</strong> Convex mirrors give a wider field of view, but they create a distortion where objects appear smaller and more distant than they actually are. This is important to know so you don't misjudge the speed or closeness of vehicles behind you."
+  },
+  {
+    chapter: "Chapter 3 — Knowing Your Motorcycle",
+    q: "You should never drive off of which type of motorcycle support?",
+    correct: "The stand — always push the motorcycle off the stand before moving",
+    wrong: ["A raised loading dock", "A centre stand during a tire check", "A parking kerb"],
+    explanation: "<strong>Correct: Never drive off a stand.</strong> Always physically push the motorcycle off its stand before moving. If you ride away while the stand is still down, it can dig into the road when turning, causing loss of control and a crash."
+  },
+
+  // ===== CHAPTER 4: SIGNS, SIGNALS AND ROAD MARKINGS =====
+  {
+    chapter: "Chapter 4 — Signs, Signals & Road Markings",
+    q: "What does a flashing green traffic light mean?",
+    correct: "A pedestrian-controlled light — go only if the intersection is clear, a pedestrian may activate it to change to yellow/red",
+    wrong: ["You have the absolute right-of-way and may proceed at full speed", "The intersection is temporarily uncontrolled — treat as four-way stop", "Only buses and emergency vehicles may proceed"],
+    explanation: "<strong>Correct: Pedestrian-controlled.</strong> A flashing green means pedestrians can activate the light to change it to yellow and then red. Side-street traffic faces a stop sign. You may proceed only if the intersection is clear, but be ready for the signal to change at any moment."
+  },
+  {
+    chapter: "Chapter 4 — Signs, Signals & Road Markings",
+    q: "A steady yellow traffic light means:",
+    correct: "Slow down and stop before the intersection, unless you cannot safely stop in time",
+    wrong: ["Speed up to clear the intersection before it turns red", "Come to a complete stop no matter what", "Yield to oncoming traffic only"],
+    explanation: "<strong>Correct: Slow down and stop if you can.</strong> Yellow means the signal is about to turn red. You must stop before entering the intersection unless stopping safely is not possible given your speed and position. If you're already in the intersection waiting to turn left, you may legally complete the turn."
+  },
+  {
+    chapter: "Chapter 4 — Signs, Signals & Road Markings",
+    q: "What does a double solid yellow centre line mean?",
+    correct: "No passing is allowed from either direction",
+    wrong: ["Passing is allowed only during daylight hours", "Only large vehicles may not pass here", "Passing is allowed when you can see clearly ahead"],
+    explanation: "<strong>Correct: No passing from either direction.</strong> A double solid yellow line divides traffic moving in opposite directions. No vehicle may cross a double solid yellow line to pass. This is typically used in areas where passing would be especially dangerous."
+  },
+  {
+    chapter: "Chapter 4 — Signs, Signals & Road Markings",
+    q: "What is the speed limit in a playground zone when the 30 km/h sign is posted?",
+    correct: "30 km/h, every day from dawn to dusk",
+    wrong: ["30 km/h, weekdays only from 8 a.m. to 5 p.m.", "50 km/h when children are not visibly present", "30 km/h only during school hours"],
+    explanation: "<strong>Correct: 30 km/h, every day from dawn to dusk.</strong> Playground zones have a 30 km/h limit that applies every single day (including weekends and holidays) from dawn to dusk. This differs from school zones, which operate from 8 a.m. to 5 p.m. on school days."
+  },
+  {
+    chapter: "Chapter 4 — Signs, Signals & Road Markings",
+    q: "What does a white diamond symbol painted on the road surface indicate?",
+    correct: "A reserved lane for specific vehicles such as HOVs or buses",
+    wrong: ["A turning lane for motorcycles only", "A designated bicycle crossing zone", "A hazard warning zone ahead"],
+    explanation: "<strong>Correct: A reserved lane.</strong> White diamond shapes on the road mark reserved lanes. These lanes may be for high-occupancy vehicles (HOVs), buses, or bicycles. Signs above or beside the lane will tell you which vehicles are allowed to use it."
+  },
+  {
+    chapter: "Chapter 4 — Signs, Signals & Road Markings",
+    q: "When should you use your motorcycle's low beam headlight instead of high beam?",
+    correct: "In fog, heavy rain, or when visibility is limited — high beam reflects off precipitation and causes glare",
+    wrong: ["Always use high beam for maximum road illumination", "Only use low beam in school zones", "Use low beam only when following another vehicle closely"],
+    explanation: "<strong>Correct: In fog or heavy rain, use low beam.</strong> High beam headlights reflect off fog and rain droplets, creating glare that reduces your own vision and blinds oncoming drivers. Low beam illuminates the road ahead more effectively in poor-visibility conditions."
+  },
+
+  // ===== CHAPTER 5: RULES OF THE ROAD =====
+  {
+    chapter: "Chapter 5 — Rules of the Road",
+    q: "At a four-way stop, two vehicles arrive at exactly the same time from different directions. Who should go first?",
+    correct: "The vehicle on the right should go first",
+    wrong: ["The vehicle facing uphill has priority", "The larger vehicle should proceed first", "The vehicle travelling faster should go first"],
+    explanation: "<strong>Correct: The vehicle on the right.</strong> At a four-way stop when vehicles arrive at the same time: (1) the first to arrive goes first; (2) if they arrive simultaneously, the one on the right goes first; (3) if facing each other, the one going straight yields to the left-turner."
+  },
+  {
+    chapter: "Chapter 5 — Rules of the Road",
+    q: "You are stopped at a red light. You want to turn right. Under B.C. law, what may you do after coming to a full stop?",
+    correct: "Turn right after stopping and ensuring the intersection is clear, unless a sign prohibits it",
+    wrong: ["You must wait for the green light before turning", "You may turn right only if a pedestrian crossing sign is not present", "Right turns on red are only allowed after 10 p.m."],
+    explanation: "<strong>Correct: Turn right after stopping if clear and no sign prohibits it.</strong> In B.C., after making a full stop at a red light, you may turn right (or left onto a one-way street) if the intersection is clear of all traffic, cyclists, and pedestrians, and no sign forbids the turn."
+  },
+  {
+    chapter: "Chapter 5 — Rules of the Road",
+    q: "Lane splitting — riding between lanes of slow or stopped traffic — is:",
+    correct: "Illegal in B.C. and also dangerous",
+    wrong: ["Legal for motorcycles in B.C. at speeds under 30 km/h", "Legal only on freeways during congestion", "Legal if traffic is stopped and you move at walking pace"],
+    explanation: "<strong>Correct: Illegal and dangerous in B.C.</strong> Lane splitting is prohibited in British Columbia. It's dangerous because stopped or slow traffic may suddenly start, change lanes, or open a door. When you split lanes, you have no space margin to protect yourself."
+  },
+  {
+    chapter: "Chapter 5 — Rules of the Road",
+    q: "When must you yield to a public transit bus?",
+    correct: "When the bus is signalling and displaying a yield-to-bus sign to leave the curb, on roads with a speed limit of 60 km/h or lower",
+    wrong: ["Only when there is a bus lane present", "At all times on any road", "Only when a passenger is boarding or departing"],
+    explanation: "<strong>Correct: When signalling with a yield-to-bus sign, on 60 km/h or lower roads.</strong> B.C. law requires all drivers and riders to yield to a transit bus that is signalling and displaying the yield sign on roads with speed limits at or below 60 km/h."
+  },
+  {
+    chapter: "Chapter 5 — Rules of the Road",
+    q: "How far must you park from a fire hydrant in B.C.?",
+    correct: "Within five metres of a fire hydrant is illegal",
+    wrong: ["Within two metres", "Within ten metres", "Within one metre"],
+    explanation: "<strong>Correct: Within five metres is prohibited.</strong> B.C. parking rules prohibit parking within five metres of a fire hydrant (measured from the point at the curb beside the hydrant). Blocking a hydrant could delay firefighting and puts lives at risk."
+  },
+  {
+    chapter: "Chapter 5 — Rules of the Road",
+    q: "At an uncontrolled intersection, two vehicles arrive at the same time. What is the right-of-way rule?",
+    correct: "The vehicle on the left must yield to the vehicle on the right",
+    wrong: ["The larger vehicle has the right-of-way", "The vehicle going straight always has priority", "The first vehicle to enter the intersection has right-of-way"],
+    explanation: "<strong>Correct: Yield to the vehicle on the right.</strong> At uncontrolled intersections with no signs or signals, when vehicles arrive at the same time, the one on the left must yield to the one on the right. If another vehicle has already arrived before you, slow down and yield to them."
+  },
+  {
+    chapter: "Chapter 5 — Rules of the Road",
+    q: "When entering a roundabout, you must:",
+    correct: "Yield to traffic already in the roundabout and go counterclockwise",
+    wrong: ["Proceed if your lane has a green arrow displayed", "Stop and wait for the roundabout to completely empty", "Yield only to traffic approaching from your left"],
+    explanation: "<strong>Correct: Yield to traffic already in the roundabout, go counterclockwise.</strong> Roundabout rules require you to yield to vehicles already circulating inside. You must travel counterclockwise (going right to enter). Do not change lanes inside a roundabout, and don't ride alongside large vehicles."
+  },
+  {
+    chapter: "Chapter 5 — Rules of the Road",
+    q: "Motorcycles may use HOV (High Occupancy Vehicle) lanes:",
+    correct: "On some roads, when a sign says 'Motorcycles OK'",
+    wrong: ["At all times without any restriction since riders are solo", "Never, as motorcycles are single-occupant vehicles", "Only when riding as part of a group of two or more"],
+    explanation: "<strong>Correct: Only when signs say 'Motorcycles OK.'</strong> HOV lanes are normally reserved for buses and carpool vehicles. Motorcycles, bicycles, and taxis may use them on some roads, but you must watch for the specific sign permitting motorcycle use."
+  },
+
+  // ===== CHAPTER 6: SEE-THINK-DO =====
+  {
+    chapter: "Chapter 6 — See-Think-Do",
+    q: "How far ahead should you scan while riding in the city?",
+    correct: "At least 12 seconds ahead — approximately one to two blocks",
+    wrong: ["At least 3 seconds ahead", "As far as you can see", "At least 6 seconds — one block ahead"],
+    explanation: "<strong>Correct: 12 seconds — one to two blocks in the city.</strong> You should always look at least 12 seconds ahead while riding. In the city, this means one to two blocks; on the highway, about half a kilometre. This gives you time to prepare for hazards instead of being surprised."
+  },
+  {
+    chapter: "Chapter 6 — See-Think-Do",
+    q: "How often should you complete the full observation cycle (looking ahead, scanning sides, checking mirrors)?",
+    correct: "Every five to eight seconds",
+    wrong: ["Every 12 to 15 seconds", "Every two to three seconds", "Only when approaching intersections"],
+    explanation: "<strong>Correct: Every 5 to 8 seconds.</strong> The observation cycle — look ahead 12 seconds, scan both sides of the road for hazards, then glance in mirrors to check behind — should be repeated continuously, completing each full cycle every 5 to 8 seconds."
+  },
+  {
+    chapter: "Chapter 6 — See-Think-Do",
+    q: "Countersteering means that to turn LEFT at medium or high speed, you:",
+    correct: "Gently push forward on the LEFT handlebar, causing the bike to lean left",
+    wrong: ["Pull back on the right handlebar to lean left", "Turn the handlebars directly to the left like a car", "Apply the front brake gently while leaning left"],
+    explanation: "<strong>Correct: Push forward on the LEFT handlebar.</strong> Countersteering works by pushing on the handlebar in the direction you want to turn. Pushing left → leans left → turns left. Pushing right → leans right → turns right. This applies at speeds above 10 km/h and is essential for safe cornering."
+  },
+  {
+    chapter: "Chapter 6 — See-Think-Do",
+    q: "What is the minimum safe following distance in good weather and road conditions?",
+    correct: "At least two seconds",
+    wrong: ["At least one car length (about 5 metres)", "At least 30 metres regardless of speed", "One second per 15 km/h of speed"],
+    explanation: "<strong>Correct: At least two seconds.</strong> In good conditions, maintain a minimum two-second following distance. Increase to three seconds on high-speed roads, and four seconds in bad weather or on uneven/slippery roads. Behind large vehicles, use three or more seconds to maintain visibility."
+  },
+  {
+    chapter: "Chapter 6 — See-Think-Do",
+    q: "When a driver is tailgating you from behind, what is the recommended response?",
+    correct: "Gradually slow down and increase the gap in front of you to four seconds",
+    wrong: ["Brake sharply to warn the tailgater", "Speed up to create more distance behind you", "Pull into an adjacent lane immediately"],
+    explanation: "<strong>Correct: Gradually slow and increase front space to four seconds.</strong> By slowing gently and enlarging the gap in front, you can stop more gradually if needed, giving the tailgater more time to react. You can also flash your brake lights, change lanes, or pull over to let them pass."
+  },
+  {
+    chapter: "Chapter 6 — See-Think-Do",
+    q: "What is the 'dominant lane position' on a typical road and why is it preferred?",
+    correct: "The left lane position — maximizes distance from parked cars and debris, making you more visible",
+    wrong: ["The centre lane position — keeps you farthest from both edges", "The right lane position — gives most room from oncoming traffic", "There is no preferred position — change constantly"],
+    explanation: "<strong>Correct: The left lane position.</strong> The left lane position is generally preferred because it keeps maximum distance from parked cars (and opening doors), road debris on the right shoulder, and makes you more visible to traffic ahead. It also makes it harder for vehicles to squeeze into your lane beside you."
+  },
+  {
+    chapter: "Chapter 6 — See-Think-Do",
+    q: "When stopping at an intersection where your view is blocked, what should you do?",
+    correct: "Stop at the stop line, then edge forward until you have a clear view before proceeding",
+    wrong: ["Rev the engine so other road users hear you approaching", "Pull forward quickly into the intersection to gain visibility", "Wait for another vehicle to go first and follow it through"],
+    explanation: "<strong>Correct: Stop at the line, then edge forward carefully.</strong> After stopping at the stop line (or before the crosswalk), if your view is blocked you may inch forward slowly into the intersection to improve visibility. This is safer than pulling forward rapidly and risking a collision."
+  },
+
+  // ===== CHAPTER 7: SHARING THE ROAD =====
+  {
+    chapter: "Chapter 7 — Sharing the Road",
+    q: "When must all traffic stop for a school bus?",
+    correct: "When the school bus shows alternating flashing red lights — from both the front and the rear, in all lanes",
+    wrong: ["Only vehicles behind the bus must stop", "Only vehicles travelling in the same direction need to stop", "Stop only if the bus is on a road without a median divider"],
+    explanation: "<strong>Correct: All traffic from both directions must stop.</strong> When a school bus displays alternating flashing red lights at the top, every vehicle in all lanes in both directions must stop, regardless of direction of travel. Wait until the lights turn off and the stop sign retracts, or the bus moves on."
+  },
+  {
+    chapter: "Chapter 7 — Sharing the Road",
+    q: "How close to a fire truck may you follow when riding behind it?",
+    correct: "You must stay at least 150 metres behind a fire truck",
+    wrong: ["At least 30 metres", "At least 60 metres", "At least 100 metres"],
+    explanation: "<strong>Correct: At least 150 metres.</strong> When following a fire truck responding to an emergency, B.C. law requires all drivers and riders to maintain a minimum following distance of 150 metres. This gives fire crews safe working room."
+  },
+  {
+    chapter: "Chapter 7 — Sharing the Road",
+    q: "When is it best to use your horn near a horse and rider?",
+    correct: "Avoid the horn if at all possible — it can startle the horse causing the rider to lose control",
+    wrong: ["Use a short beep to warn the rider you are approaching", "Use the horn so the rider knows to move to the shoulder", "Use it when passing at any speed"],
+    explanation: "<strong>Correct: Avoid the horn near horses.</strong> Horses can be startled by sudden noise, and a loud horn can cause the animal to bolt or throw its rider. Instead, slow down, allow extra space, and pass slowly and carefully. If the rider is losing control, stop and wait until the horse settles."
+  },
+  {
+    chapter: "Chapter 7 — Sharing the Road",
+    q: "When riding in a group formation on an open highway, riders should use:",
+    correct: "A staggered formation with a minimum two-second following distance from the rider directly ahead",
+    wrong: ["A single-file line with one second between each bike", "Side-by-side pairs with the same two-second distance", "A V-formation with the most experienced rider in front"],
+    explanation: "<strong>Correct: Staggered formation, two-second following distance.</strong> In staggered formation, the leader rides in the left lane position, the next rider slightly behind in the right position, and so on. This uses less road space and gives each rider visibility ahead. Two seconds minimum between each pair."
+  },
+  {
+    chapter: "Chapter 7 — Sharing the Road",
+    q: "When passing a large truck, before re-entering the lane in front of it, you should confirm:",
+    correct: "You can see the truck's headlights in your mirror before pulling in front",
+    wrong: ["The truck driver has flashed their headlights to signal it is safe", "You have passed the trailer entirely by five car lengths", "Your speed matches the truck's speed exactly"],
+    explanation: "<strong>Correct: See the truck's headlights in your mirror.</strong> Large vehicles need a long distance to slow down. Before pulling back in front of a truck after passing, check that you can see the truck's headlights in your mirrors — this ensures you've left enough space. Then maintain your speed."
+  },
+  {
+    chapter: "Chapter 7 — Sharing the Road",
+    q: "When you approach a pedestrian using a white cane who raises it, what does this signal to you?",
+    correct: "The visually impaired person is unsure if it is safe to cross — stop and give them the right-of-way",
+    wrong: ["They are confirming they see you and you may proceed", "They want you to honk your horn so they can hear you", "They are asking for directions"],
+    explanation: "<strong>Correct: Stop and give right-of-way.</strong> A raised white cane indicates a visually impaired person is not sure if it is safe to cross. You must stop and give them the right-of-way. Never startle a blind person or their guide dog by revving your engine or sounding your horn."
+  },
+
+  // ===== CHAPTER 8: PERSONAL STRATEGIES =====
+  {
+    chapter: "Chapter 8 — Personal Strategies",
+    q: "In B.C., all riders and drivers are prohibited from which actions involving electronic devices while driving?",
+    correct: "Using, holding, or operating any hand-held cellphone, GPS, or music device while driving — even when stopped at a light",
+    wrong: ["Only texting is prohibited; phone calls are allowed", "Hands-free devices are allowed for all licence holders", "Only probationary (GLP) riders face restrictions"],
+    explanation: "<strong>Correct: All hand-held electronic devices are prohibited.</strong> The law covers operating, viewing, or holding any handheld cellphone, GPS, music player, or gaming device. It applies even when stopped in traffic. Note: GLP riders face additional restrictions, including hands-free devices."
+  },
+  {
+    chapter: "Chapter 8 — Personal Strategies",
+    q: "Research shows that talking on a cell phone while driving reduces your visual awareness by approximately:",
+    correct: "50 per cent",
+    wrong: ["15 per cent", "25 per cent", "70 per cent"],
+    explanation: "<strong>Correct: 50 per cent.</strong> Studies show that drivers talking on a cell phone lose about 50% of what is happening around them visually. Even at a stop, you are still operating the vehicle and legally prohibited from using a hand-held device."
+  },
+  {
+    chapter: "Chapter 8 — Personal Strategies",
+    q: "Statistics show that what fraction of people killed in motorcycle crashes had alcohol in their blood?",
+    correct: "Half (50 per cent)",
+    wrong: ["One quarter (25 per cent)", "Two thirds (66 per cent)", "One third (33 per cent)"],
+    explanation: "<strong>Correct: Half.</strong> According to the Motorcycle Safety Foundation, half of the people killed in motorcycle crashes have alcohol in their blood — and of those, two-thirds had only one or two drinks before the crash. Even small amounts of alcohol significantly impair riding ability."
+  },
+  {
+    chapter: "Chapter 8 — Personal Strategies",
+    q: "Only time can lower your blood alcohol content (BAC). Which of the following does NOT speed up alcohol elimination?",
+    correct: "Coffee, food, cold showers, and exercise do not speed elimination",
+    wrong: ["Drinking a lot of water", "Taking a strong vitamin supplement", "Exercising vigorously for 30 minutes"],
+    explanation: "<strong>Correct: None of those things speed up alcohol elimination.</strong> Only time reduces BAC. Food, coffee, cold showers, and exercise do not accelerate the process. A BAC of .08 takes about six hours to return to zero, according to Transport Canada."
+  },
+  {
+    chapter: "Chapter 8 — Personal Strategies",
+    q: "How much riding experience is recommended before carrying a passenger?",
+    correct: "Approximately 2,500 kilometres of riding experience",
+    wrong: ["At least 500 kilometres", "No minimum — any fully licensed rider may carry a passenger", "At least one full riding season (around 5,000 km)"],
+    explanation: "<strong>Correct: About 2,500 kilometres.</strong> Carrying a passenger significantly changes how the motorcycle handles — affecting acceleration, braking distance, and stability. Experts recommend about 2,500 km of solo experience before taking on the added responsibility of a passenger."
+  },
+  {
+    chapter: "Chapter 8 — Personal Strategies",
+    q: "When confronted with road aggression from another driver, you should:",
+    correct: "Respond with good manners, avoid eye contact, don't gesture back, keep calm, and give extra space",
+    wrong: ["Match their aggression to establish dominance", "Speed up to get away from the aggressive driver", "Sound your horn and flash your lights to warn them"],
+    explanation: "<strong>Correct: Stay calm, give room, avoid engagement.</strong> As a rider, you are extremely vulnerable in any conflict. Never return aggression. Avoid eye contact, don't gesture, give the aggressive driver room, and keep calm. If you feel threatened, ride to a populated location like a mall or police station."
+  },
+  {
+    chapter: "Chapter 8 — Personal Strategies",
+    q: "A safe passenger must always do which of the following?",
+    correct: "Keep both feet on the footpegs, face forward astride the bike, and hold the rider's waist or grab rail",
+    wrong: ["Lean away from turns to counterbalance the rider", "Keep feet off pegs on straightaways to reduce drag", "Look behind frequently to watch for following traffic"],
+    explanation: "<strong>Correct: Feet on footpegs, face forward, hold on.</strong> Passengers must always sit facing forward, keep both feet on the footpegs, and hold onto the rider's waist or grab rail. They must go with the lean of the motorcycle and never dismount while the bike is moving."
+  },
+
+  // ===== CHAPTER 9: CHALLENGING RIDING CONDITIONS =====
+  {
+    chapter: "Chapter 9 — Challenging Riding Conditions",
+    q: "When is rain most slippery on the road surface?",
+    correct: "During the first half-hour of rain after a long dry spell — oil and dust mix with water to form a slippery film",
+    wrong: ["During heavy downpours when there is standing water", "Only on roads that have not been recently paved", "When rain falls on very cold pavement below 4°C"],
+    explanation: "<strong>Correct: First half-hour after a dry spell.</strong> When rain first hits a road that has been dry for a while, it mixes with accumulated oil, rubber, and dust to form an extremely slippery oily film. This washes away with continued rain, making roads less slippery as the rain continues."
+  },
+  {
+    chapter: "Chapter 9 — Challenging Riding Conditions",
+    q: "What is the best strategy for crossing railway tracks that run at a sharp angle to your path?",
+    correct: "Slow down and angle your bike so you cross as close to 90 degrees as possible (45–90 degrees is safe)",
+    wrong: ["Speed up to minimize the time spent on the tracks", "Cross parallel to the tracks to maintain your lane position", "Apply the rear brake lightly while crossing for stability"],
+    explanation: "<strong>Correct: Cross at 45–90 degrees to the tracks.</strong> Railway tracks can trap your wheel if crossed at too shallow an angle. The safest approach is to cross as close to perpendicular (90°) as possible. Slow down before crossing, release the brakes, and maintain a steady speed across."
+  },
+  {
+    chapter: "Chapter 9 — Challenging Riding Conditions",
+    q: "If the shape of a curve changes while you are riding through it (such as a decreasing-radius curve), you should:",
+    correct: "Look where you want to go and steer steadily in that direction — countersteer more if needed, avoid braking in the curve",
+    wrong: ["Apply the rear brake to scrub speed while in the curve", "Immediately straighten the bike and ride off the road if needed", "Pump the brakes to reduce speed in the curve"],
+    explanation: "<strong>Correct: Look where you want to go and steer steadily.</strong> If a curve tightens unexpectedly, keep your eyes looking through the curve to where you want to go (the bike follows your eyes), maintain or smoothly reduce speed by rolling off the throttle, and countersteer/lean more as needed. Braking mid-curve can cause skidding."
+  },
+  {
+    chapter: "Chapter 9 — Challenging Riding Conditions",
+    q: "Hydroplaning happens when:",
+    correct: "Tires lose contact with the road and float on a film of water, causing sudden loss of steering and braking control",
+    wrong: ["Water splashes onto the engine, causing it to stall", "The front forks flex too much in heavy rain", "Rain decreases visibility to less than 50 metres"],
+    explanation: "<strong>Correct: Tires float on water film, losing traction.</strong> Hydroplaning occurs when your tires can no longer channel water away fast enough, lifting off the road surface. You'll notice the steering suddenly becomes very light. If this happens, roll off the throttle gently — don't brake or turn until traction returns."
+  },
+  {
+    chapter: "Chapter 9 — Challenging Riding Conditions",
+    q: "When riding at night, how must you adjust your following distance?",
+    correct: "Increase following distance beyond the normal two seconds",
+    wrong: ["Decrease following distance to keep closer to tail lights as a guide", "Follow distance doesn't need to change at night", "Following distance only matters in rain, not darkness"],
+    explanation: "<strong>Correct: Increase following distance at night.</strong> At night you have reduced visibility and others have difficulty seeing you. You should increase following distance, space margins, and slow down. Additionally, you must dim your headlight when within 150 metres of another vehicle."
+  },
+  {
+    chapter: "Chapter 9 — Challenging Riding Conditions",
+    q: "Where are crosswinds most likely to cause sudden unexpected gusts?",
+    correct: "At tunnel entrances/exits, bridge openings, gaps between tall buildings, and exposed elevated roadways",
+    wrong: ["Only in rural areas away from buildings", "Mainly on downhill sections of mountain roads", "At busy intersections due to large vehicle traffic"],
+    explanation: "<strong>Correct: Tunnels, bridges, building gaps, exposed areas.</strong> These locations create conditions where wind is funnelled, suddenly blocked, or suddenly released. Anticipate turbulence as you approach these features. If crosswinds are severe, stop riding until they subside."
+  },
+
+  // ===== CHAPTER 10: EMERGENCY STRATEGIES =====
+  {
+    chapter: "Chapter 10 — Emergency Strategies",
+    q: "ABS (Anti-lock Braking System) on a motorcycle works by:",
+    correct: "Automatically releasing and reapplying brakes to prevent wheel lock-up — you apply continuous firm pressure",
+    wrong: ["Electronically limiting brake force to 70% of maximum", "Allowing you to brake and steer simultaneously at all times", "Detecting skids and automatically straightening the handlebar"],
+    explanation: "<strong>Correct: Automatically pulses brakes to prevent lockup.</strong> With ABS, apply continuous firm pressure to both brakes — the system's sensors automatically cycle the brakes to prevent wheel lockup. Unlike car ABS, motorcycle ABS does not allow simultaneous braking and steering. On some surfaces like gravel, stopping distance may be longer."
+  },
+  {
+    chapter: "Chapter 10 — Emergency Strategies",
+    q: "If your motorcycle's engine fails while riding, the very first action you should take is:",
+    correct: "Squeeze the clutch lever immediately to disengage the engine from the transmission",
+    wrong: ["Apply both brakes hard to stop quickly", "Shift to neutral by pressing the gearshift lever", "Turn the handlebars sharply to pull to the side"],
+    explanation: "<strong>Correct: Squeeze the clutch immediately.</strong> If the engine seizes, the rear wheel can lock up and cause a skid. Squeezing the clutch instantly disconnects the engine from the drivetrain, preventing a sudden rear-wheel lockup. Then signal, steer to the shoulder, and stop safely."
+  },
+  {
+    chapter: "Chapter 10 — Emergency Strategies",
+    q: "If you have a flat front tire while riding, the correct procedure is:",
+    correct: "Ease off the throttle, avoid braking if possible, grip firmly, keep upright, and let the bike slow before pulling over",
+    wrong: ["Apply the front brake firmly to stop as quickly as possible", "Immediately swerve to the nearest side of the road", "Apply both brakes equally and hard to come to a quick stop"],
+    explanation: "<strong>Correct: Roll off throttle, hold firm, avoid braking, pull over slowly.</strong> A flat tire makes the bike unstable and prone to falls. Never brake hard — use only the brake for the good tire if absolutely necessary. Hold the handlebars firmly, keep the bike upright, shift weight away from the flat, and ease to a stop."
+  },
+  {
+    chapter: "Chapter 10 — Emergency Strategies",
+    q: "When should you use acceleration as a collision avoidance technique?",
+    correct: "Only when you cannot brake or steer around the hazard — use it to clear the collision point before the other vehicle reaches it",
+    wrong: ["Always try to accelerate first before braking", "When a car is tailgating you", "Whenever you see a hazard — react first, then assess"],
+    explanation: "<strong>Correct: Only when braking or steering is not possible.</strong> Acceleration should be your last resort for collision avoidance, used only when there is enough space ahead and no other option. Being in the correct gear is crucial so you have immediate power available."
+  },
+  {
+    chapter: "Chapter 10 — Emergency Strategies",
+    q: "If your motorcycle begins to speed wobble (front wheel shaking), you should:",
+    correct: "Grip handlebars firmly, gradually slow down, do NOT apply brakes, and rise slightly on footpegs",
+    wrong: ["Apply the front brake firmly to stabilize the bike", "Quickly steer in the opposite direction of the wobble", "Release the handlebars briefly to allow the wobble to self-correct"],
+    explanation: "<strong>Correct: Grip firmly, slow gradually, no brakes, rise on pegs.</strong> Applying brakes during a wobble can make it much worse and lead to a crash. Instead, grip the bars firmly to dampen the oscillation, gradually reduce speed, and shift your weight to the footpegs to improve stability."
+  },
+  {
+    chapter: "Chapter 10 — Emergency Strategies",
+    q: "If you are involved in a crash in B.C., you are legally required to:",
+    correct: "Remain at the scene, give all reasonable assistance, and exchange name, address, licence plate, and insurance information",
+    wrong: ["Move vehicles immediately and leave if damage is minor", "Call ICBC first before exchanging information with anyone", "You only need to stay if there is an injury — minor crashes require only a police report"],
+    explanation: "<strong>Correct: Stay, assist, and exchange information.</strong> B.C. law requires you to: (1) remain at the scene; (2) provide reasonable assistance and call emergency services if needed; (3) exchange your name, address, licence plate, and insurance information with any driver, injured person, or property owner involved."
+  },
+  {
+    chapter: "Chapter 10 — Emergency Strategies",
+    q: "When combining collision avoidance manoeuvres, what is the main rule?",
+    correct: "Do one thing at a time — combining braking and steering simultaneously is likely to cause a skid",
+    wrong: ["Use braking and steering at the same time for maximum effect", "Always prioritize braking over steering in an emergency", "Accelerate and steer simultaneously for the best outcome"],
+    explanation: "<strong>Correct: Do one thing at a time.</strong> If you brake and steer simultaneously, you risk exceeding the tires' traction limit and skidding. If you accelerate while steering sharply, you may lose traction and fall. Always choose the safest single action first, then transition to the next as needed."
+  },
+
+  // ===== MORE QUESTIONS ACROSS CHAPTERS =====
+  {
+    chapter: "Chapter 3 — Knowing Your Motorcycle",
+    q: "What does the OIL PRESSURE WARNING LIGHT indicate?",
+    correct: "A red light warning of low oil pressure — take action immediately",
+    wrong: ["It indicates the oil needs to be changed within 500 km", "A blue light indicating high oil temperature", "It measures the oil level in the tank and illuminates when low"],
+    explanation: "<strong>Correct: Red light — low oil pressure, act immediately.</strong> The oil pressure warning light is red and warns of dangerously low oil pressure in the engine. Take action as soon as possible to solve the problem. Note: this light does not tell you the oil level — use the dipstick or sight window to check that separately."
+  },
+  {
+    chapter: "Chapter 6 — See-Think-Do",
+    q: "Where is the grease strip most likely to be found in a lane?",
+    correct: "Down the centre of the lane, especially on city roads and at intersections",
+    wrong: ["Along the right edge near the gutter", "On the left side of the lane near the centre line", "Randomly distributed throughout the lane"],
+    explanation: "<strong>Correct: Down the centre of the lane.</strong> The centre strip of a lane accumulates oil and grease from car engines. At intersections, idling vehicles deposit even more. Riders should typically choose the left lane position to avoid this grease strip, unless it is the only dry section of the lane."
+  },
+  {
+    chapter: "Chapter 5 — Rules of the Road",
+    q: "What must you do before crossing a bicycle lane to make a right turn?",
+    correct: "Signal well ahead and yield to all cyclists in the bicycle lane",
+    wrong: ["Come to a complete stop and wait for the lane to be completely clear", "Change lanes through the bicycle lane only at marked crossing points or a broken white line", "Sound the horn to warn cyclists you are crossing"],
+    explanation: "<strong>Correct: Signal ahead and yield to cyclists.</strong> You may only cross a bicycle lane where the white line is broken or to turn into/out of a driveway. You must signal well in advance and yield to any cyclists in the lane. Never ride, stop, or park in a bicycle lane."
+  },
+  {
+    chapter: "Chapter 9 — Challenging Riding Conditions",
+    q: "When carrying cargo on your motorcycle, where should you position the load for maximum stability?",
+    correct: "Low and close to the centre of the bike, distributed evenly within the 'load triangle'",
+    wrong: ["High and forward near the handlebars for better balance", "Rear-heavy to keep the front wheel light for steering", "Strapped on top of the seat to keep the centre of gravity high"],
+    explanation: "<strong>Correct: Low, centred, within the load triangle.</strong> The load triangle is the area between the two axles and the rider's head. Keeping cargo low and within this triangle maintains the motorcycle's stability and handling. High or uneven loads dramatically affect cornering and braking."
+  },
+  {
+    chapter: "Chapter 8 — Personal Strategies",
+    q: "Why is fatigue particularly dangerous for motorcycle riders?",
+    correct: "It slows all three stages of see-think-do: hazard detection, decision-making, and reaction time",
+    wrong: ["It mainly affects just the sense of balance", "It only impacts long-distance riders on highways", "Fatigue mainly affects your ability to signal correctly"],
+    explanation: "<strong>Correct: Fatigue impairs all stages of see-think-do.</strong> Being tired causes you to miss hazards you'd normally spot, slows your thinking so you make poorer decisions, and lengthens your reaction time. All three stages of the see-think-do strategy are compromised."
+  },
+  {
+    chapter: "Chapter 1 — You in the Rider's Seat",
+    q: "What is the first step in your planned learning process toward getting a Class 6 licence?",
+    correct: "Study the guide, then pass the motorcycle knowledge test to get a learner's licence",
+    wrong: ["Get on a motorcycle and practise until you feel ready", "Book a road test directly at ICBC", "Take a professional training course before any tests"],
+    explanation: "<strong>Correct: Study the guide and pass the knowledge test.</strong> The learning process is: (1) Study this guide, (2) pass the knowledge test to get your learner's licence, (3) practise with expert help, (4) pass the motorcycle skills test, (5) practise on quiet roads, (6) pass the road test for your Class 6."
+  },
+  {
+    chapter: "Chapter 2 — You and Your Motorcycle",
+    q: "What is the purpose of wearing a high-visibility garment while riding?",
+    correct: "To make yourself more visible to other road users, reducing crash risk",
+    wrong: ["It is required by ICBC insurance policy", "It provides additional abrasion protection in a crash", "It helps you stay cool by reflecting sunlight"],
+    explanation: "<strong>Correct: Improved visibility.</strong> High-visibility garments — fluorescent panels, reflective striping — make you far more visible to other road users in both daylight and nighttime conditions. Motorcycles are small and easy to miss; making yourself as visible as possible is one of the best safety measures you can take."
+  },
+  {
+    chapter: "Chapter 7 — Sharing the Road",
+    q: "You know you are clear of a large truck's blind spots when:",
+    correct: "You can see both of the truck's mirrors from your position",
+    wrong: ["The truck driver waves or flashes headlights", "You are ahead of the truck's front bumper", "You can see the truck's side marker lights"],
+    explanation: "<strong>Correct: You can see both of the truck's mirrors.</strong> If you can see both mirrors on a truck, the driver can likely see you. Large vehicles have massive blind spots beside and behind them. If you can't see their mirrors, they almost certainly cannot see you — stay well back or pass quickly and clearly."
+  },
+  {
+    chapter: "Chapter 4 — Signs, Signals & Road Markings",
+    q: "A broken yellow centre line on a two-lane road means:",
+    correct: "Passing is allowed when it is safe to do so",
+    wrong: ["A two-way left-turn lane begins", "No passing is allowed from either direction", "The road narrows ahead — stay right"],
+    explanation: "<strong>Correct: Passing is allowed when safe.</strong> A broken yellow line separating two-way traffic means passing is permitted when you can safely do so. A solid yellow line on your side prohibits passing from your direction. A double solid line prohibits passing from either direction."
+  },
+  {
+    chapter: "Chapter 6 — See-Think-Do",
+    q: "When riding behind a large vehicle, why should you maintain at least a three-second following distance?",
+    correct: "Large vehicles block your forward view of hazards, and they may throw gravel or spray at you",
+    wrong: ["They take longer to accelerate so you may rear-end them", "Their engine fumes require extra distance to dissipate", "Large vehicles have powerful air brakes that stop much faster than motorcycles"],
+    explanation: "<strong>Correct: Vision blockage and debris risk.</strong> A large truck blocks your view of traffic and road hazards ahead. Extra following distance gives you a wider view and reaction time. It also keeps you back from gravel and spray thrown by the truck's tires, which can be dangerous at highway speeds."
+  },
+  {
+    chapter: "Chapter 10 — Emergency Strategies",
+    q: "The 'What If?' strategy for emergency preparation means:",
+    correct: "As you ride, constantly scan ahead and mentally rehearse what you would do if a specific hazard occurred",
+    wrong: ["Carrying emergency gear at all times", "Always having an alternate route planned", "Making sure someone knows your route and expected arrival time"],
+    explanation: "<strong>Correct: Mentally rehearse responses to possible hazards.</strong> The 'What if?' strategy means proactively thinking, 'What if that car door opens? What if a child runs out? What if the truck loses a load?' By pre-programming your responses, you can react far more quickly and correctly when emergencies actually occur."
+  },
+  {
+    chapter: "Chapter 9 — Challenging Riding Conditions",
+    q: "In fog or heavy rain, which headlight beam should you use and why?",
+    correct: "Low beam — high beam reflects off fog/rain particles, reducing your vision and blinding others",
+    wrong: ["High beam — it illuminates further ahead in poor conditions", "Alternate between high and low every few seconds", "Turn off the headlight to avoid glare reflecting into your eyes"],
+    explanation: "<strong>Correct: Low beam in fog and rain.</strong> High beam light scatters off fog and rain particles, creating glare that reduces your own vision and blinds oncoming drivers. Low beam is aimed lower and cuts through precipitation more effectively, improving visibility for everyone."
+  },
+  {
+    chapter: "Chapter 5 — Rules of the Road",
+    q: "When a traffic light is malfunctioning and all four lights are flashing, you should:",
+    correct: "Treat it as a four-way stop",
+    wrong: ["Treat it as a yield intersection", "Proceed through carefully since it is no longer controlled", "Wait for a traffic control officer to arrive before proceeding"],
+    explanation: "<strong>Correct: Treat it as a four-way stop.</strong> When traffic lights fail — whether they go out completely or start flashing — the intersection reverts to four-way stop rules. The first to arrive goes first; if simultaneous, yield to the right; left-turners yield to through traffic."
+  }
+];
+
+// Quiz state
+let questions = [];
+let current = 0;
+let correct = 0;
+let wrong = 0;
+let answered = false;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  // Shuffle questions
+  questions = shuffle(ALL_QUESTIONS);
+  current = 0; correct = 0; wrong = 0; answered = false;
+
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('results-screen').classList.remove('visible');
+  document.getElementById('main-quiz').classList.add('visible');
+
+  updateScoreBar();
+  showQuestion();
+}
+
+function showQuestion() {
+  answered = false;
+  const q = questions[current];
+
+  // Chapter tag
+  document.getElementById('chapter-tag').textContent = '📖 ' + q.chapter;
+
+  // Question text
+  document.getElementById('question-text').textContent = q.q;
+
+  // Build shuffled options
+  const allOptions = shuffle([q.correct, ...q.wrong]);
+  const letters = ['A', 'B', 'C', 'D'];
+  const container = document.getElementById('options-list');
+  container.innerHTML = '';
+
+  allOptions.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="opt-letter">${letters[idx]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectAnswer(opt, q.correct, q.explanation, btn);
+    container.appendChild(btn);
+  });
+
+  // Hide explanation and next
+  const expBox = document.getElementById('explanation-box');
+  expBox.classList.remove('visible', 'correct-exp', 'wrong-exp');
+  document.getElementById('next-btn').classList.remove('visible');
+
+  // Update progress
+  const total = questions.length;
+  const pct = Math.round((current / total) * 100);
+  document.getElementById('progress-label').textContent = `Question ${current + 1} of ${total}`;
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+
+function selectAnswer(chosen, correctAnswer, explanation, clickedBtn) {
+  if (answered) return;
+  answered = true;
+
+  const allBtns = document.querySelectorAll('.option-btn');
+  allBtns.forEach(btn => {
+    btn.disabled = true;
+    const txt = btn.querySelector('span:last-child').textContent;
+    if (txt === correctAnswer) {
+      btn.classList.add('correct');
+    }
+  });
+
+  const isCorrect = chosen === correctAnswer;
+  if (!isCorrect) {
+    clickedBtn.classList.add('wrong');
+    wrong++;
+  } else {
+    correct++;
+  }
+
+  // Explanation
+  const expBox = document.getElementById('explanation-box');
+  const expHeader = document.getElementById('explanation-header');
+  const expText = document.getElementById('explanation-text');
+
+  expBox.classList.add('visible');
+  if (isCorrect) {
+    expBox.classList.add('correct-exp');
+    expHeader.textContent = '✓ Correct!';
+  } else {
+    expBox.classList.add('wrong-exp');
+    expHeader.textContent = '✗ Incorrect';
+  }
+  expText.innerHTML = explanation;
+
+  updateScoreBar();
+  document.getElementById('next-btn').classList.add('visible');
+
+  // Last question
+  if (current >= questions.length - 1) {
+    document.getElementById('next-btn').textContent = 'SEE RESULTS →';
+  } else {
+    document.getElementById('next-btn').textContent = 'NEXT QUESTION →';
+  }
+}
+
+function updateScoreBar() {
+  const total = questions.length;
+  document.getElementById('score-correct').textContent = correct;
+  document.getElementById('score-wrong').textContent = wrong;
+  document.getElementById('score-remaining').textContent = total - current - (answered ? 1 : 0);
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) {
+    showResults();
+    return;
+  }
+  // Update progress
+  const pct = Math.round((current / questions.length) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  updateScoreBar();
+  showQuestion();
+}
+
+function showResults() {
+  document.getElementById('main-quiz').classList.remove('visible');
+  const total = questions.length;
+  const pct = Math.round((correct / total) * 100);
+
+  document.getElementById('result-score-big').textContent = pct + '%';
+  document.getElementById('result-fraction').textContent = `${correct} out of ${total} correct`;
+  document.getElementById('r-correct').textContent = correct;
+  document.getElementById('r-wrong').textContent = wrong;
+
+  let icon, title, grade, message, color;
+  if (pct >= 90) {
+    icon = '🏆'; title = 'OUTSTANDING!'; grade = 'READY TO RIDE';
+    message = 'Excellent work! You are well-prepared for the ICBC Motorcycle Knowledge Test.';
+    color = '#4caf65';
+  } else if (pct >= 80) {
+    icon = '✅'; title = 'GREAT JOB!'; grade = 'NEARLY THERE';
+    message = 'Strong performance! A bit more review and you will ace the real test.';
+    color = '#8bc34a';
+  } else if (pct >= 70) {
+    icon = '📚'; title = 'GOOD EFFORT'; grade = 'KEEP STUDYING';
+    message = 'You have a solid base but some chapters need more attention. Review the guide and try again.';
+    color = '#ffca28';
+  } else if (pct >= 60) {
+    icon = '⚠️'; title = 'NEEDS WORK'; grade = 'MORE STUDY REQUIRED';
+    message = 'You will need to study further before taking the real test. Focus on the chapters where you got questions wrong.';
+    color = '#ff9800';
+  } else {
+    icon = '❌'; title = 'KEEP PRACTISING'; grade = 'SIGNIFICANT REVIEW NEEDED';
+    message = 'Don\'t get discouraged — review the Learn to Ride Smart guide thoroughly, especially the chapters on rules, safety strategies, and emergency procedures.';
+    color = '#e74c3c';
+  }
+
+  document.getElementById('result-icon').textContent = icon;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-subtitle').textContent = `You scored ${pct}% on this practice test.`;
+  document.getElementById('result-grade').textContent = grade;
+  document.getElementById('result-grade').style.color = color;
+  document.getElementById('result-message').textContent = message;
+  document.getElementById('result-score-big').style.color = color;
+
+  // Animate progress bar to 100%
+  document.getElementById('progress-bar').style.width = '100%';
+
+  document.getElementById('results-screen').classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restartQuiz() {
+  document.getElementById('results-screen').classList.remove('visible');
+  startQuiz();
+}
+</script>
+</body>
+</html>
